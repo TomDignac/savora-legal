@@ -1,58 +1,182 @@
 <!doctype html>
 <html lang="fr">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Savora</title>
-  <meta name="robots" content="noindex">
-  <!--
-    Page d'accueil du site légal. C'est aussi la « Site URL » de Supabase : le lien de confirmation de l'e-mail
-    d'inscription y mène (vérification V1 sociale du 04/11/2026 — la racine était une page 404 de GitHub).
-  -->
-  <style>
-    /* Couleurs de la charte 2.0 (§2, §12) : nuit par défaut, jour si le système le demande. */
-    :root { --bg: #07130F; --text: #EAEAEA; --muted: #8A8A8A; --accent: #7E9C74; --rule: #1E2A25; }
-    @media (prefers-color-scheme: light) {
-      :root { --bg: #F5F1E8; --text: #2A2823; --muted: #6B665A; --accent: #587350; --rule: #DDD6C6; }
-    }
-    body { margin: 0; background: var(--bg); color: var(--text);
-      font: 16px/1.6 Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
-    main { max-width: 720px; margin: 0 auto; padding: 32px 16px 64px; }
-    nav { display: flex; flex-wrap: wrap; gap: 16px; margin-bottom: 32px; }
-    nav a, p a { color: var(--accent); }
-    h1 { font-family: "Playfair Display", Georgia, serif; font-weight: 600; font-size: 28px; line-height: 1.25; margin: 0 0 16px; }
-    p { margin: 0 0 12px; }
-    .links { color: var(--muted); font-size: 14px; }
-    article + article { margin-top: 48px; padding-top: 32px; border-top: 1px solid var(--rule); }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Savora</title>
+<!--
+  Page d'accueil de savora-legal. C'est aussi la « Site URL » de Supabase : le lien de confirmation de l'e-mail
+  d'inscription y mène, et un ancien lien « Mot de passe oublié » aussi. La langue suit celle du navigateur
+  (fr, en, de, it ; anglais sinon). Polices hébergées ici : aucune requête vers un service tiers.
+-->
+<style>
+  @font-face { font-family: "Playfair Display"; font-weight: 600; font-display: swap; src: url("fonts/playfair-600.woff2") format("woff2"); }
+  @font-face { font-family: "Inter"; font-weight: 400; font-display: swap; src: url("fonts/inter-400.woff2") format("woff2"); }
+  @font-face { font-family: "Inter"; font-weight: 500; font-display: swap; src: url("fonts/inter-500.woff2") format("woff2"); }
+
+  :root {
+    --bg: #F9F5EF;
+    --card: #FCFAF6;
+    --ink: #1F3A26;
+    --text: #2E2B26;
+    --muted: #6E685E;
+    --green: #1F4A2A;
+    --green-hover: #173A21;
+    --pill: #E3EAD7;
+    --border: #EBCFBE;
+    --logo-tile: #021E17;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; min-height: 100%; }
+  body {
+    min-height: 100vh;
+    background: var(--bg) url("img/fond.jpg") center / cover no-repeat fixed;
+    color: var(--text);
+    font: 16px/1.55 Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    display: flex; flex-direction: column; align-items: center;
+    padding: 24px 16px 32px;
+    position: relative; overflow-x: hidden;
+  }
+  .deco { position: fixed; pointer-events: none; z-index: 0; opacity: .9; }
+  .deco.haut { top: -10px; right: -40px; width: min(260px, 38vw); transform: scaleX(-1) rotate(-8deg); }
+  .deco.bas { bottom: -20px; left: -30px; width: min(240px, 36vw); }
+
+  header { width: 100%; max-width: 980px; display: flex; align-items: center; gap: 10px; position: relative; z-index: 1; }
+  .tuile { width: 36px; height: 36px; border-radius: 9px; background: var(--logo-tile); display: grid; place-items: center; }
+  .tuile img { width: 26px; height: 26px; }
+  .marque { font-family: "Playfair Display", Georgia, serif; font-weight: 600; font-size: 26px; color: var(--ink); letter-spacing: .01em; }
+
+  main { flex: 1; display: grid; place-items: center; width: 100%; position: relative; z-index: 1; padding: 24px 0; }
+  .carte {
+    width: 100%; max-width: 480px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 22px;
+    box-shadow: 0 18px 40px -24px rgba(60, 40, 20, .35);
+    padding: 28px 28px 24px;
+    text-align: center;
+  }
+  .pastille {
+    display: inline-block; background: var(--pill); color: var(--ink);
+    font-size: 12px; font-weight: 500; letter-spacing: .14em; text-transform: uppercase;
+    padding: 6px 14px; border-radius: 999px;
+  }
+  .illustration { display: block; width: 78%; max-width: 300px; height: auto; margin: 14px auto 6px; }
+  h1 {
+    font-family: "Playfair Display", Georgia, serif; font-weight: 600;
+    color: var(--ink); font-size: clamp(26px, 6.4vw, 34px); line-height: 1.15; margin: 6px 0 10px;
+  }
+  .texte { margin: 0 auto 22px; max-width: 36ch; }
+  .bouton {
+    display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+    min-height: 48px; padding: 0 28px; border-radius: 14px;
+    background: var(--green); color: #fff; text-decoration: none; font-weight: 500; font-size: 17px;
+  }
+  .bouton:hover, .bouton:focus-visible { background: var(--green-hover); }
+  .bouton:focus-visible { outline: 3px solid #9DB58C; outline-offset: 3px; }
+  .note { color: var(--muted); font-size: 14px; margin: 16px 0 0; }
+
+  footer { text-align: center; position: relative; z-index: 1; }
+  .devise { font-family: "Playfair Display", Georgia, serif; color: var(--ink); font-size: 18px; margin: 0 0 6px; }
+  .liens { color: var(--muted); font-size: 14px; margin: 0; }
+  .liens a { color: var(--muted); text-decoration: none; }
+  .liens a:hover { text-decoration: underline; }
+  .liens span { margin: 0 8px; }
+
+  @media (max-width: 480px) {
+    .carte { padding: 22px 18px 20px; border-radius: 18px; }
+    .deco.haut { opacity: .55; }
+    .deco.bas { opacity: .55; }
+  }
+</style>
 </head>
 <body>
-<main>
-  <nav><a href="#fr">Français</a><a href="#en">English</a><a href="#de">Deutsch</a><a href="#it">Italiano</a></nav>
-  <article id="fr" lang="fr">
-    <h1>Savora</h1>
-    <p>Tu viens de confirmer ton adresse e-mail ? Retourne dans l’app Savora et touche « J’ai vérifié, continuer » : ton compte est prêt.</p>
-    <p>Tu as touché un lien « Mot de passe oublié » et tu arrives ici ? Demande un nouveau lien depuis l’app, puis ouvre l’e-mail sur le téléphone où Savora est installée.</p>
-    <p class="links"><a href="cgu/">Conditions d’utilisation</a> · <a href="confidentialite/">Politique de confidentialité</a></p>
-  </article>
-  <article id="en" lang="en">
-    <h1>Savora</h1>
-    <p>Just confirmed your email address? Go back to the Savora app and tap “I have verified, continue”: your account is ready.</p>
-    <p>Tapped a “Forgot password” link and landed here? Ask for a new link in the app, then open the email on the phone where Savora is installed.</p>
-    <p class="links"><a href="cgu/">Terms of Service</a> · <a href="confidentialite/">Privacy Policy</a></p>
-  </article>
-  <article id="de" lang="de">
-    <h1>Savora</h1>
-    <p>Du hast gerade deine E-Mail-Adresse bestätigt? Geh zurück in die Savora-App und tippe auf „Ich habe bestätigt, weiter“: Dein Konto ist bereit.</p>
-    <p>Du hast auf einen Link „Passwort vergessen“ getippt und bist hier gelandet? Fordere in der App einen neuen Link an und öffne die E-Mail auf dem Telefon, auf dem Savora installiert ist.</p>
-    <p class="links"><a href="cgu/">Nutzungsbedingungen</a> · <a href="confidentialite/">Datenschutzerklärung</a></p>
-  </article>
-  <article id="it" lang="it">
-    <h1>Savora</h1>
-    <p>Hai appena confermato il tuo indirizzo email? Torna nell’app Savora e tocca «Ho verificato, continua»: il tuo account è pronto.</p>
-    <p>Hai toccato un link «Password dimenticata» e sei arrivato qui? Chiedi un nuovo link dall’app, poi apri l’email sul telefono dove è installata Savora.</p>
-    <p class="links"><a href="cgu/">Condizioni d’uso</a> · <a href="confidentialite/">Informativa sulla privacy</a></p>
-  </article>
-</main>
+  <img class="deco haut" src="img/branche-trait.png" alt="">
+  <img class="deco bas" src="img/branche-douce.png" alt="">
+
+  <header>
+    <span class="tuile"><img src="img/savora-symbol.svg" alt=""></span>
+    <span class="marque">savora</span>
+  </header>
+
+  <main>
+    <section class="carte" aria-live="polite">
+      <span class="pastille" data-t="pastille">E-mail vérifié</span>
+      <img class="illustration" src="img/enveloppe.png" alt="" width="640" height="410">
+      <h1 data-t="titre">Ton e-mail est confirmé !</h1>
+      <p class="texte" data-t="texte">Bienvenue chez Savora. Ton compte est prêt : retourne dans l’app et touche « J’ai vérifié, continuer ».</p>
+      <a class="bouton" href="savora://" data-t="bouton">Ouvrir Savora →</a>
+      <p class="note" data-t="note">Tu peux fermer cette page.</p>
+    </section>
+  </main>
+
+  <footer>
+    <p class="devise" data-t="devise">Savora · Le plaisir de bien manger</p>
+    <p class="liens">
+      <a href="confidentialite/" data-t="confidentialite">Confidentialité</a><span>·</span><a href="cgu/" data-t="cgu">Conditions d’utilisation</a>
+    </p>
+  </footer>
+
+<script>
+(function () {
+  var T = {
+    fr: {
+      confirme: { pastille: "E-mail vérifié", titre: "Ton e-mail est confirmé !", texte: "Bienvenue chez Savora. Ton compte est prêt : retourne dans l’app et touche « J’ai vérifié, continuer »." },
+      motdepasse: { pastille: "Mot de passe", titre: "Choisis ton nouveau mot de passe dans l’app", texte: "Ce lien s’ouvre dans l’app Savora. Ouvre l’e-mail sur le téléphone où Savora est installée, ou demande un nouveau lien depuis l’app." },
+      expire: { pastille: "Lien expiré", titre: "Ce lien n’est plus valable", texte: "Il a déjà servi ou il a expiré. Retourne dans l’app Savora pour en demander un nouveau." },
+      bouton: "Ouvrir Savora →", note: "Tu peux fermer cette page.", devise: "Savora · Le plaisir de bien manger",
+      confidentialite: "Confidentialité", cgu: "Conditions d’utilisation"
+    },
+    en: {
+      confirme: { pastille: "Email verified", titre: "Your email is confirmed!", texte: "Welcome to Savora. Your account is ready: go back to the app and tap “I have verified, continue”." },
+      motdepasse: { pastille: "Password", titre: "Choose your new password in the app", texte: "This link opens in the Savora app. Open the email on the phone where Savora is installed, or request a new link from the app." },
+      expire: { pastille: "Link expired", titre: "This link is no longer valid", texte: "It has already been used or it has expired. Go back to the Savora app to request a new one." },
+      bouton: "Open Savora →", note: "You can close this page.", devise: "Savora · The joy of eating well",
+      confidentialite: "Privacy", cgu: "Terms of Service"
+    },
+    de: {
+      confirme: { pastille: "E-Mail bestätigt", titre: "Deine E-Mail ist bestätigt!", texte: "Willkommen bei Savora. Dein Konto ist bereit: Geh zurück in die App und tippe auf „Ich habe bestätigt, weiter“." },
+      motdepasse: { pastille: "Passwort", titre: "Wähle dein neues Passwort in der App", texte: "Dieser Link öffnet sich in der Savora-App. Öffne die E-Mail auf dem Telefon, auf dem Savora installiert ist, oder fordere in der App einen neuen Link an." },
+      expire: { pastille: "Link abgelaufen", titre: "Dieser Link ist nicht mehr gültig", texte: "Er wurde schon benutzt oder ist abgelaufen. Geh zurück in die Savora-App und fordere einen neuen an." },
+      bouton: "Savora öffnen →", note: "Du kannst diese Seite schließen.", devise: "Savora · Die Freude am guten Essen",
+      confidentialite: "Datenschutz", cgu: "Nutzungsbedingungen"
+    },
+    it: {
+      confirme: { pastille: "Email verificata", titre: "La tua email è confermata!", texte: "Benvenuto su Savora. Il tuo account è pronto: torna nell’app e tocca «Ho verificato, continua»." },
+      motdepasse: { pastille: "Password", titre: "Scegli la nuova password nell’app", texte: "Questo link si apre nell’app Savora. Apri l’email sul telefono dove è installata Savora, oppure chiedi un nuovo link dall’app." },
+      expire: { pastille: "Link scaduto", titre: "Questo link non è più valido", texte: "È già stato usato o è scaduto. Torna nell’app Savora per chiederne uno nuovo." },
+      bouton: "Apri Savora →", note: "Puoi chiudere questa pagina.", devise: "Savora · Il piacere di mangiare bene",
+      confidentialite: "Privacy", cgu: "Condizioni d’uso"
+    }
+  };
+
+  // Langue : la première langue du navigateur parmi fr, en, de, it ; anglais sinon. ?lang=xx pour forcer.
+  var forced = (new URLSearchParams(location.search).get("lang") || "").slice(0, 2);
+  var prefs = [forced].concat(navigator.languages || [navigator.language || ""]);
+  var lang = "en";
+  for (var i = 0; i < prefs.length; i++) {
+    var c = String(prefs[i] || "").slice(0, 2).toLowerCase();
+    if (T[c]) { lang = c; break; }
+  }
+
+  // Cas : Supabase ajoute des informations après « # » (type=recovery, ou une erreur si le lien a expiré).
+  var h = new URLSearchParams(location.hash.replace(/^#/, ""));
+  var q = new URLSearchParams(location.search);
+  var cas = "confirme";
+  if (h.get("error") || h.get("error_code") || q.get("error")) cas = "expire";
+  else if (h.get("type") === "recovery" || q.get("type") === "recovery") cas = "motdepasse";
+
+  // On efface ce qui suit « # » de la barre d'adresse : il peut contenir un jeton de session.
+  if (location.hash && history.replaceState) history.replaceState(null, "", location.pathname + location.search);
+
+  var d = T[lang];
+  document.documentElement.lang = lang;
+  var map = { pastille: d[cas].pastille, titre: d[cas].titre, texte: d[cas].texte, bouton: d.bouton, note: d.note,
+              devise: d.devise, confidentialite: d.confidentialite, cgu: d.cgu };
+  var els = document.querySelectorAll("[data-t]");
+  for (var j = 0; j < els.length; j++) { var k = els[j].getAttribute("data-t"); if (map[k]) els[j].textContent = map[k]; }
+})();
+</script>
 </body>
 </html>
