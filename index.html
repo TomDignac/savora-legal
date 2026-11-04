@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Savora</title>
+  <meta name="robots" content="noindex">
+  <!--
+    Page d'accueil du site légal. C'est aussi la « Site URL » de Supabase : le lien de confirmation de l'e-mail
+    d'inscription y mène (vérification V1 sociale du 04/11/2026 — la racine était une page 404 de GitHub).
+  -->
+  <style>
+    /* Couleurs de la charte 2.0 (§2, §12) : nuit par défaut, jour si le système le demande. */
+    :root { --bg: #07130F; --text: #EAEAEA; --muted: #8A8A8A; --accent: #7E9C74; --rule: #1E2A25; }
+    @media (prefers-color-scheme: light) {
+      :root { --bg: #F5F1E8; --text: #2A2823; --muted: #6B665A; --accent: #587350; --rule: #DDD6C6; }
+    }
+    body { margin: 0; background: var(--bg); color: var(--text);
+      font: 16px/1.6 Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    main { max-width: 720px; margin: 0 auto; padding: 32px 16px 64px; }
+    nav { display: flex; flex-wrap: wrap; gap: 16px; margin-bottom: 32px; }
+    nav a, p a { color: var(--accent); }
+    h1 { font-family: "Playfair Display", Georgia, serif; font-weight: 600; font-size: 28px; line-height: 1.25; margin: 0 0 16px; }
+    p { margin: 0 0 12px; }
+    .links { color: var(--muted); font-size: 14px; }
+    article + article { margin-top: 48px; padding-top: 32px; border-top: 1px solid var(--rule); }
+  </style>
+</head>
+<body>
+<main>
+  <nav><a href="#fr">Français</a><a href="#en">English</a><a href="#de">Deutsch</a><a href="#it">Italiano</a></nav>
+  <article id="fr" lang="fr">
+    <h1>Savora</h1>
+    <p>Tu viens de confirmer ton adresse e-mail ? Retourne dans l’app Savora et touche « J’ai vérifié, continuer » : ton compte est prêt.</p>
+    <p>Tu as touché un lien « Mot de passe oublié » et tu arrives ici ? Demande un nouveau lien depuis l’app, puis ouvre l’e-mail sur le téléphone où Savora est installée.</p>
+    <p class="links"><a href="cgu/">Conditions d’utilisation</a> · <a href="confidentialite/">Politique de confidentialité</a></p>
+  </article>
+  <article id="en" lang="en">
+    <h1>Savora</h1>
+    <p>Just confirmed your email address? Go back to the Savora app and tap “I have verified, continue”: your account is ready.</p>
+    <p>Tapped a “Forgot password” link and landed here? Ask for a new link in the app, then open the email on the phone where Savora is installed.</p>
+    <p class="links"><a href="cgu/">Terms of Service</a> · <a href="confidentialite/">Privacy Policy</a></p>
+  </article>
+  <article id="de" lang="de">
+    <h1>Savora</h1>
+    <p>Du hast gerade deine E-Mail-Adresse bestätigt? Geh zurück in die Savora-App und tippe auf „Ich habe bestätigt, weiter“: Dein Konto ist bereit.</p>
+    <p>Du hast auf einen Link „Passwort vergessen“ getippt und bist hier gelandet? Fordere in der App einen neuen Link an und öffne die E-Mail auf dem Telefon, auf dem Savora installiert ist.</p>
+    <p class="links"><a href="cgu/">Nutzungsbedingungen</a> · <a href="confidentialite/">Datenschutzerklärung</a></p>
+  </article>
+  <article id="it" lang="it">
+    <h1>Savora</h1>
+    <p>Hai appena confermato il tuo indirizzo email? Torna nell’app Savora e tocca «Ho verificato, continua»: il tuo account è pronto.</p>
+    <p>Hai toccato un link «Password dimenticata» e sei arrivato qui? Chiedi un nuovo link dall’app, poi apri l’email sul telefono dove è installata Savora.</p>
+    <p class="links"><a href="cgu/">Condizioni d’uso</a> · <a href="confidentialite/">Informativa sulla privacy</a></p>
+  </article>
+</main>
+</body>
+</html>
