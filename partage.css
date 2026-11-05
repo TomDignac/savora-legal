@@ -1,0 +1,103 @@
+/* Savora — pages de partage (site/l/, site/p/). Même style que site/index.html : crème, encadré, Playfair / Inter
+   hébergées ici. Feuille externe : la Content-Security-Policy des pages n'autorise aucun style en ligne. */
+@font-face { font-family: "Playfair Display"; font-weight: 600; font-display: swap; src: url("fonts/playfair-600.woff2") format("woff2"); }
+@font-face { font-family: "Inter"; font-weight: 400; font-display: swap; src: url("fonts/inter-400.woff2") format("woff2"); }
+@font-face { font-family: "Inter"; font-weight: 500; font-display: swap; src: url("fonts/inter-500.woff2") format("woff2"); }
+
+:root {
+  --bg: #F9F5EF;
+  --card: #FCFAF6;
+  --ink: #1F3A26;
+  --text: #2E2B26;
+  --muted: #6E685E;
+  --green: #1F4A2A;
+  --green-hover: #173A21;
+  --pill: #E3EAD7;
+  --border: #EBCFBE;
+  --line: #EFE6DA;
+  --logo-tile: #021E17;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; min-height: 100%; }
+body {
+  min-height: 100vh;
+  background: var(--bg) url("img/fond.jpg") center / cover no-repeat fixed;
+  color: var(--text);
+  font: 16px/1.55 Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  display: flex; flex-direction: column; align-items: center;
+  padding: 24px 16px 32px;
+  position: relative; overflow-x: hidden;
+}
+.deco { position: fixed; pointer-events: none; z-index: 0; opacity: .9; }
+.deco.haut { top: -10px; right: -40px; width: min(260px, 38vw); transform: scaleX(-1) rotate(-8deg); }
+.deco.bas { bottom: -20px; left: -30px; width: min(240px, 36vw); }
+
+header { width: 100%; max-width: 980px; display: flex; align-items: center; gap: 10px; position: relative; z-index: 1; }
+header a { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+.tuile { width: 36px; height: 36px; border-radius: 9px; background: var(--logo-tile); display: grid; place-items: center; }
+.tuile img { width: 26px; height: 26px; }
+.marque { font-family: "Playfair Display", Georgia, serif; font-weight: 600; font-size: 26px; color: var(--ink); letter-spacing: .01em; }
+
+main { flex: 1; display: grid; place-items: center; width: 100%; position: relative; z-index: 1; padding: 24px 0; }
+.carte {
+  width: 100%; max-width: 480px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  box-shadow: 0 18px 40px -24px rgba(60, 40, 20, .35);
+  padding: 28px 28px 24px;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+.pastille {
+  display: inline-block; background: var(--pill); color: var(--ink);
+  font-size: 12px; font-weight: 500; letter-spacing: .14em; text-transform: uppercase;
+  padding: 6px 14px; border-radius: 999px;
+}
+.tuile-lieu {
+  width: 96px; height: 96px; margin: 18px auto 4px; border-radius: 24px;
+  background: var(--pill); display: grid; place-items: center;
+}
+h1 {
+  font-family: "Playfair Display", Georgia, serif; font-weight: 600;
+  color: var(--ink); font-size: clamp(26px, 6.4vw, 34px); line-height: 1.15; margin: 10px 0 8px;
+}
+.sous-titre { font-family: "Playfair Display", Georgia, serif; font-weight: 600; color: var(--ink); font-size: 20px; margin: 22px 0 10px; }
+.meta { color: var(--muted); margin: 0 0 4px; }
+.adresse { margin: 0 auto; max-width: 36ch; }
+.texte { margin: 10px auto 18px; max-width: 36ch; }
+.actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 14px; }
+.bouton {
+  display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+  min-height: 48px; padding: 0 22px; border-radius: 14px;
+  background: var(--green); color: #fff; text-decoration: none; font-weight: 500; font-size: 16px;
+}
+.bouton:hover, .bouton:focus-visible { background: var(--green-hover); }
+.bouton:focus-visible, .lieu:focus-visible { outline: 3px solid #9DB58C; outline-offset: 3px; }
+.bouton.secondaire { background: transparent; color: var(--green); border: 1.5px solid var(--green); }
+.bouton.secondaire:hover, .bouton.secondaire:focus-visible { background: var(--pill); }
+.note { color: var(--muted); font-size: 14px; margin: 14px 0 0; }
+
+.etagere { text-align: left; margin-top: 8px; }
+.etagere-tete { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+.compte { color: var(--muted); font-size: 14px; white-space: nowrap; }
+.lieux { list-style: none; margin: 0; padding: 0; }
+.lieux li + li { border-top: 1px solid var(--line); }
+.lieu { display: flex; align-items: center; gap: 12px; padding: 10px 2px; min-height: 56px; color: inherit; text-decoration: none; border-radius: 10px; }
+.lieu:hover .lieu-nom { text-decoration: underline; }
+.lieu .vignette { flex: none; width: 40px; height: 40px; padding: 6px; border-radius: 12px; background: var(--pill); }
+.lieu-texte { display: flex; flex-direction: column; min-width: 0; }
+.lieu-nom { font-weight: 500; color: var(--ink); }
+.lieu-meta { color: var(--muted); font-size: 14px; }
+
+footer { text-align: center; position: relative; z-index: 1; }
+.devise { font-family: "Playfair Display", Georgia, serif; color: var(--ink); font-size: 18px; margin: 0 0 6px; }
+.liens { color: var(--muted); font-size: 14px; margin: 0; }
+.liens a { color: var(--muted); text-decoration: none; }
+.liens a:hover { text-decoration: underline; }
+.liens span { margin: 0 8px; }
+
+@media (max-width: 480px) {
+  .carte { padding: 22px 18px 20px; border-radius: 18px; }
+  .deco.haut, .deco.bas { opacity: .55; }
+}

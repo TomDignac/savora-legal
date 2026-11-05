@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; font-src 'self'; img-src 'self'; connect-src 'self' https://zxfjkoflfhaxacokarxl.supabase.co; base-uri 'none'; form-action 'none'">
+<title>Savora</title>
+<!--
+  Une adresse partagée depuis l'app Savora. Tout voyage dans le lien (nom, type, cuisine, ville, adresse,
+  coordonnées) : cette page ne lit aucune base. Jamais de note, de photo, de date, de prix ni d'avis.
+  Langue : celle du navigateur (fr, en, de, it ; anglais sinon), ?lang=xx pour forcer.
+-->
+<link rel="stylesheet" href="../partage.css">
+</head>
+<body data-page="lieu">
+  <img class="deco haut" src="../img/branche-trait.png" alt="">
+  <img class="deco bas" src="../img/branche-douce.png" alt="">
+
+  <header>
+    <a href="../"><span class="tuile"><img src="../img/savora-symbol.svg" alt=""></span><span class="marque">savora</span></a>
+  </header>
+
+  <main>
+    <section class="carte" id="carte" aria-live="polite"></section>
+  </main>
+
+  <footer>
+    <p class="devise" data-t="devise">Savora · The joy of eating well</p>
+    <p class="liens">
+      <a href="../confidentialite/" data-t="confidentialite">Privacy</a><span>·</span><a href="../cgu/" data-t="cgu">Terms of Service</a>
+    </p>
+  </footer>
+
+<script src="../partage-core.js"></script>
+<script src="../partage-page.js"></script>
+</body>
+</html>
