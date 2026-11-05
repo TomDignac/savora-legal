@@ -92,26 +92,77 @@
       return;
     }
     let name = P.capitalizeFirst(place.name);
+    let mine = P.parseMineParams(location.search);
     document.title = name + ' · Savora';
     clear();
-    card.appendChild(el('span', 'pastille', T('placeBadge')));
-    let tile = el('div', 'tuile-lieu');
-    tile.appendChild(icon(place.placeType, 56));
-    card.appendChild(tile);
-    card.appendChild(el('h1', null, name));
-    let meta = P.placeMeta(lang, place);
-    if (meta.length > 0) {
-      card.appendChild(el('p', 'meta', meta));
+    card.className = 'carte fiche';
+
+    // Bandeau sans photo, comme la fiche de l'app : fond sauge à 12 %, symbole à 18 %, tuile du type.
+    // La page n'affiche JAMAIS de photo (celles des carnets sont privées).
+    let hero = el('div', 'hero');
+    let mark = el('img', 'filigrane');
+    mark.setAttribute('src', '../img/savora-symbol.svg');
+    mark.setAttribute('alt', '');
+    hero.appendChild(mark);
+    let tile = el('div', 'tuile-type');
+    tile.appendChild(el('span', 'glyphe t-' + (place.placeType || 'restaurant')));
+    hero.appendChild(tile);
+    card.appendChild(hero);
+
+    let identity = el('div', 'identite');
+    identity.appendChild(el('h1', null, name));
+    if (place.city) {
+      identity.appendChild(el('p', 'meta', place.city));
     }
+    let pills = el('div', 'pastilles');
+    let typeLabel = P.placeTypeLabel(lang, place.placeType);
+    if (typeLabel) {
+      pills.appendChild(el('span', 'puce', typeLabel));
+    }
+    let cuisines = P.cuisinesLabels(lang, place);
+    for (let i = 0; i < cuisines.length; i++) {
+      pills.appendChild(el('span', 'puce', cuisines[i]));
+    }
+    if (pills.firstChild) {
+      identity.appendChild(pills);
+    }
+    if (mine !== null) {
+      identity.appendChild(mineBlock(mine));
+    }
+    card.appendChild(identity);
+
+    let body = el('div', 'corps');
     if (place.address) {
-      card.appendChild(el('p', 'adresse', place.address));
+      let info = el('div', 'info');
+      info.appendChild(el('span', 'epingle'));
+      info.appendChild(el('span', 'info-texte', place.address));
+      body.appendChild(info);
     }
-    card.appendChild(el('h2', 'sous-titre', T('directions')));
     let maps = el('div', 'actions');
-    append(maps, link(P.plansUrl(place), 'bouton', T('plans'), true));
-    append(maps, link(P.googleUrl(place), 'bouton', T('google'), true));
-    card.appendChild(maps);
-    appActions(null);
+    append(maps, link(P.plansUrl(place), 'bouton secondaire', T('plans'), true));
+    append(maps, link(P.googleUrl(place), 'bouton secondaire', T('google'), true));
+    body.appendChild(maps);
+    let open = el('div', 'actions');
+    append(open, link(P.appUrl(null), 'bouton', T('open'), false));
+    body.appendChild(open);
+    body.appendChild(el('p', 'note', T('downloadNote')));
+    append(body, link(P.TESTFLIGHT_URL, 'lien-discret', T('download'), true));
+    card.appendChild(body);
+  }
+
+  /** « Ma fiche » : état, extrait d'avis, pseudo — les seuls champs personnels du lien, tous nettoyés par le noyau. */
+  function mineBlock(mine) {
+    let box = el('div', 'ma-fiche');
+    if (mine.state) {
+      box.appendChild(el('span', 'etat etat-' + mine.state, P.categoryLabel(lang, mine.state)));
+    }
+    if (mine.excerpt) {
+      box.appendChild(el('blockquote', 'avis', mine.excerpt));
+    }
+    if (mine.username) {
+      box.appendChild(el('p', 'par', T('sharedBy', { name: mine.username })));
+    }
+    return box;
   }
 
   // ── Un carnet ou une collection publics : lus par get_public_carnet ──────

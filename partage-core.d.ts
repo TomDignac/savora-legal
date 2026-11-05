@@ -23,7 +23,7 @@ export const LABELS: {
   cuisines: Record<Lang, Record<string, string>>;
   categories: Record<Lang, Record<string, string>>;
 };
-export const MAX: { name: number; city: number; address: number; title: number; username: number; displayName: number };
+export const MAX: { name: number; city: number; address: number; title: number; username: number; displayName: number; excerpt: number };
 export const MAX_PLACES: number;
 export const TESTFLIGHT_URL: string;
 export function pickLang(forced: string, prefs: readonly string[]): Lang;
@@ -35,6 +35,11 @@ export function parseCoords(lat: unknown, lng: unknown): { lat: number; lng: num
 export function parseUuid(value: unknown): string | null;
 export function normalizePlace(raw: Record<string, unknown>): PagePlace | null;
 export function parsePlaceParams(search: string): PagePlace | null;
+export type Mine = { state: 'aime' | 'pas_aime' | 'a_tester' | null; excerpt: string | null; username: string | null };
+export function parseMineParams(search: string): Mine | null;
+export function placeTypeLabel(lang: string, type: string | null): string;
+export function cuisinesLabels(lang: string, place: PagePlace): string[];
+export function categoryLabel(lang: string, key: string): string;
 export function placeQuery(place: PagePlace): string;
 export function parseCarnetParams(search: string): { user: string; collection: string | null } | null;
 export function safeHref(url: string): string | null;

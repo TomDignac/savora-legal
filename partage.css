@@ -1,21 +1,46 @@
-/* Savora — pages de partage (site/l/, site/p/). Même style que site/index.html : crème, encadré, Playfair / Inter
-   hébergées ici. Feuille externe : la Content-Security-Policy des pages n'autorise aucun style en ligne. */
+/* Savora — pages de partage (site/l/, site/p/). Aux tokens de l'app (jour et nuit), comme la fiche d'un lieu ; Playfair
+   (titres) / Inter hébergées ici. Feuille externe : la Content-Security-Policy des pages n'autorise aucun style en ligne. */
 @font-face { font-family: "Playfair Display"; font-weight: 600; font-display: swap; src: url("fonts/playfair-600.woff2") format("woff2"); }
 @font-face { font-family: "Inter"; font-weight: 400; font-display: swap; src: url("fonts/inter-400.woff2") format("woff2"); }
 @font-face { font-family: "Inter"; font-weight: 500; font-display: swap; src: url("fonts/inter-500.woff2") format("woff2"); }
 
 :root {
-  --bg: #F9F5EF;
-  --card: #FCFAF6;
-  --ink: #1F3A26;
-  --text: #2E2B26;
-  --muted: #6E685E;
-  --green: #1F4A2A;
-  --green-hover: #173A21;
-  --pill: #E3EAD7;
-  --border: #EBCFBE;
-  --line: #EFE6DA;
+  /* Mode jour : les tokens jour de l'app (theme.ts, charte §12) — la page ressemble à la fiche de l'app. */
+  --bg: #F5F1E8;          /* bg */
+  --card: #FFFFFF;        /* surface */
+  --ink: #24211B;         /* textCream */
+  --text: #24211B;        /* textCream */
+  --muted: #5F5A4E;       /* textSecondary */
+  --green: #587350;       /* sage */
+  --green-hover: #6E8A64; /* sageLight */
+  --pill: #ECE6D8;        /* surfaceElevated */
+  --border: #E4DDCD;      /* border */
+  --line: #E4DDCD;        /* border */
   --logo-tile: #021E17;
+  --sage: #587350;        /* sage */
+  --tint: rgba(126, 156, 116, .12); /* sageTint12 (même valeur dans les deux modes) */
+  --on-green: #fff;
+  --shadow: rgba(60, 40, 20, .35);
+}
+/* Mode nuit : mêmes noms de tokens que l'app (charte §2, §12) — fond #07130F, surface #0C1A15, sauge #7E9C74. */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #07130F;
+    --card: #0C1A15;
+    --ink: #F5F2ED;
+    --text: #F5F2ED;
+    --muted: #B7B7B7;
+    --green: #7E9C74;
+    --green-hover: #8CAA82; /* sageLight nuit (theme.ts) */
+    --pill: #122420;
+    --border: rgba(255, 255, 255, .08);
+    --line: rgba(255, 255, 255, .08);
+    --sage: #7E9C74;
+    --tint: rgba(126, 156, 116, .12);
+    --on-green: #07130F;
+    --shadow: rgba(0, 0, 0, .6);
+  }
+  .bouton:focus-visible, .lieu:focus-visible { outline-color: var(--sage); }
 }
 * { box-sizing: border-box; }
 html, body { margin: 0; min-height: 100%; }
@@ -44,7 +69,7 @@ main { flex: 1; display: grid; place-items: center; width: 100%; position: relat
   background: var(--card);
   border: 1px solid var(--border);
   border-radius: 22px;
-  box-shadow: 0 18px 40px -24px rgba(60, 40, 20, .35);
+  box-shadow: 0 18px 40px -24px var(--shadow);
   padding: 28px 28px 24px;
   text-align: center;
   overflow-wrap: anywhere;
@@ -70,10 +95,10 @@ h1 {
 .bouton {
   display: inline-flex; align-items: center; justify-content: center; gap: 10px;
   min-height: 48px; padding: 0 22px; border-radius: 14px;
-  background: var(--green); color: #fff; text-decoration: none; font-weight: 500; font-size: 16px;
+  background: var(--green); color: var(--on-green); text-decoration: none; font-weight: 500; font-size: 16px;
 }
 .bouton:hover, .bouton:focus-visible { background: var(--green-hover); }
-.bouton:focus-visible, .lieu:focus-visible { outline: 3px solid #9DB58C; outline-offset: 3px; }
+.bouton:focus-visible, .lieu:focus-visible { outline: 3px solid var(--sage); outline-offset: 3px; }
 .bouton.secondaire { background: transparent; color: var(--green); border: 1.5px solid var(--green); }
 .bouton.secondaire:hover, .bouton.secondaire:focus-visible { background: var(--pill); }
 .note { color: var(--muted); font-size: 14px; margin: 14px 0 0; }
@@ -101,3 +126,65 @@ footer { text-align: center; position: relative; z-index: 1; }
   .carte { padding: 22px 18px 20px; border-radius: 18px; }
   .deco.haut, .deco.bas { opacity: .55; }
 }
+
+/* ── Page d'une adresse (site/l/) : la fiche du lieu de l'app, sans photo ───────────────────────────────────── */
+.carte.fiche { padding: 0; text-align: left; overflow: hidden; }
+.hero {
+  position: relative; height: 160px; background: var(--tint);
+  display: grid; place-items: center; overflow: hidden;
+}
+.filigrane { position: absolute; width: 150px; height: 150px; opacity: .18; }
+.tuile-type {
+  position: relative; width: 84px; height: 84px; border-radius: 22px;
+  background: var(--card); border: 1px solid var(--border);
+  display: grid; place-items: center;
+}
+.glyphe {
+  display: block; width: 52px; height: 52px; background: var(--sage);
+  -webkit-mask: var(--glyphe) center / contain no-repeat; mask: var(--glyphe) center / contain no-repeat;
+}
+.t-restaurant { --glyphe: url("img/types/restaurant.svg"); }
+.t-cafe { --glyphe: url("img/types/cafe.svg"); }
+.t-bar { --glyphe: url("img/types/bar.svg"); }
+.t-street_food { --glyphe: url("img/types/street_food.svg"); }
+.t-brunch { --glyphe: url("img/types/brunch.svg"); }
+.t-gastronomique { --glyphe: url("img/types/gastronomique.svg"); }
+.identite { padding: 20px 20px 0; }
+.fiche h1 { font-size: clamp(26px, 7vw, 28px); margin: 0 0 6px; color: var(--ink); }
+.fiche .meta { margin: 0 0 12px; font-size: 14px; }
+.pastilles { display: flex; flex-wrap: wrap; gap: 8px; }
+.puce {
+  display: inline-block; padding: 5px 12px; border-radius: 999px;
+  background: var(--tint); color: var(--sage); font-size: 13px; font-weight: 500; border: 1px solid var(--border);
+}
+.ma-fiche { margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--line); }
+.etat {
+  display: inline-block; padding: 5px 14px; border-radius: 999px; font-size: 13px; font-weight: 500;
+  background: var(--sage); color: var(--on-green);
+}
+.etat-pas_aime, .etat-a_tester { background: transparent; color: var(--sage); border: 1.5px solid var(--sage); }
+.avis {
+  margin: 12px 0 0; padding: 2px 0 2px 14px; border-left: 3px solid var(--sage);
+  font-family: "Inter", system-ui, sans-serif; font-size: 16px; line-height: 1.5; color: var(--text);
+  white-space: pre-line;
+}
+.par { margin: 10px 0 0; color: var(--muted); font-size: 14px; }
+.corps { padding: 0 20px 22px; }
+.info {
+  display: flex; align-items: flex-start; gap: 12px; margin-top: 18px; padding: 14px 16px;
+  background: var(--card); border: 1px solid var(--border); border-radius: 16px;
+}
+.epingle {
+  flex: none; width: 22px; height: 22px; margin-top: 1px; background: var(--sage);
+  -webkit-mask: url("img/pin.svg") center / contain no-repeat; mask: url("img/pin.svg") center / contain no-repeat;
+}
+.info-texte { font-size: 15px; line-height: 1.45; }
+.fiche .actions { justify-content: stretch; }
+.fiche .actions .bouton { flex: 1 1 140px; }
+.lien-discret { display: block; margin-top: 8px; color: var(--muted); font-size: 14px; text-align: center; }
+.fiche .note { text-align: center; }
+/* Jour comme nuit : la fiche est posée sur le fond, comme dans l'app (pas l'encadré décoré du site vitrine). */
+.carte.fiche { background: var(--bg); }
+.info { background: var(--card); }
+body { background-image: none; }
+.deco { display: none; }

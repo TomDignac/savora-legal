@@ -25,7 +25,7 @@
   let TESTFLIGHT_URL = 'https://testflight.apple.com/join/EVuXnhQb';
   let APP_URL = 'savora://';
 
-  let MAX = { name: 120, city: 80, address: 200, title: 60, username: 40, displayName: 60 };
+  let MAX = { name: 120, city: 80, address: 200, title: 60, username: 40, displayName: 60, excerpt: 280 };
   let MAX_CUISINES = 3;
   let MAX_PLACES = 500;
 
@@ -222,6 +222,7 @@
 
   let TEXTS = {
     fr: {
+      sharedBy: 'Partagé par {name}',
       placeBadge: 'Adresse', directions: 'Itinéraire', plans: 'Plans', google: 'Google Maps',
       open: 'Ouvrir dans Savora', download: 'Télécharger Savora',
       downloadNote: 'Savora est en test sur iPhone : le lien t’invite à la version d’essai (TestFlight).',
@@ -241,6 +242,7 @@
       devise: 'Savora · Le plaisir de bien manger', confidentialite: 'Confidentialité', cgu: 'Conditions d’utilisation'
     },
     en: {
+      sharedBy: 'Shared by {name}',
       placeBadge: 'Address', directions: 'Directions', plans: 'Apple Maps', google: 'Google Maps',
       open: 'Open in Savora', download: 'Download Savora',
       downloadNote: 'Savora is in beta on iPhone: the link invites you to the test version (TestFlight).',
@@ -260,6 +262,7 @@
       devise: 'Savora · The joy of eating well', confidentialite: 'Privacy', cgu: 'Terms of Service'
     },
     de: {
+      sharedBy: 'Geteilt von {name}',
       placeBadge: 'Adresse', directions: 'Route', plans: 'Apple Karten', google: 'Google Maps',
       open: 'In Savora öffnen', download: 'Savora herunterladen',
       downloadNote: 'Savora ist auf dem iPhone in der Testphase: Der Link lädt dich zur Testversion (TestFlight) ein.',
@@ -279,6 +282,7 @@
       devise: 'Savora · Die Freude am guten Essen', confidentialite: 'Datenschutz', cgu: 'Nutzungsbedingungen'
     },
     it: {
+      sharedBy: 'Condiviso da {name}',
       placeBadge: 'Indirizzo', directions: 'Indicazioni', plans: 'Apple Mappe', google: 'Google Maps',
       open: 'Apri in Savora', download: 'Scarica Savora',
       downloadNote: 'Savora è in prova su iPhone: il link ti invita alla versione di prova (TestFlight).',
@@ -439,6 +443,20 @@
     });
   }
 
+  /**
+   * Variante « ma fiche » : `s` (état), `r` (extrait d'avis), `by` (pseudo) — les trois seuls champs PERSONNELS
+   * que le lien peut porter, choisis par la personne qui partage. État hors liste ignoré ; textes nettoyés et
+   * bornés comme les autres. `null` si rien d'exploitable.
+   */
+  function parseMineParams(search) {
+    let q = new URLSearchParams(typeof search === 'string' ? search : '');
+    let rawState = q.get('s');
+    let state = typeof rawState === 'string' && CATEGORY_KEYS.indexOf(rawState) !== -1 ? rawState : null;
+    let excerpt = cleanText(q.get('r'), MAX.excerpt) || null;
+    let username = cleanText(q.get('by'), MAX.username) || null;
+    return state === null && excerpt === null && username === null ? null : { state: state, excerpt: excerpt, username: username };
+  }
+
   /** Adresse → paramètres du lien (même encodage que l'app, `src/features/share/webShareLinks.ts`). */
   function placeQuery(place) {
     let parts = ['n=' + encodeURIComponent(place.name)];
@@ -550,6 +568,19 @@
   /** Vignette par type de lieu (`site/img/types/<type>.svg`), le restaurant par défaut. */
   function placeIcon(type) {
     return 'img/types/' + (parsePlaceType(type) || 'restaurant') + '.svg';
+  }
+
+  function cuisinesLabels(lang, place) {
+    let out = [];
+    for (let i = 0; i < place.cuisines.length; i++) {
+      if (place.cuisines[i] !== place.placeType) {
+        let l = cuisineLabel(lang, place.cuisines[i]);
+        if (l.length > 0 && out.indexOf(l) === -1) {
+          out.push(l);
+        }
+      }
+    }
+    return out;
   }
 
   function categoryLabel(lang, key) {
@@ -685,6 +716,10 @@
     parseUuid: parseUuid,
     normalizePlace: normalizePlace,
     parsePlaceParams: parsePlaceParams,
+    parseMineParams: parseMineParams,
+    placeTypeLabel: placeTypeLabel,
+    cuisinesLabels: cuisinesLabels,
+    categoryLabel: categoryLabel,
     placeQuery: placeQuery,
     parseCarnetParams: parseCarnetParams,
     safeHref: safeHref,
