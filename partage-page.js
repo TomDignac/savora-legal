@@ -1,7 +1,7 @@
 /*
  * Savora — affichage des pages de partage. Toute donnée passe par `textContent` ou un attribut posé par
  * `setAttribute` sur un lien déjà validé (`SavoraPartage.safeHref`) : jamais `innerHTML`.
- * La page déclare son rôle par `<body data-page="lieu">` ou `<body data-page="carnet">`.
+ * La page déclare son rôle par `<body data-page="lieu">`, `<body data-page="carnet">` ou `<body data-page="liste">` (lot C).
  */
 (function () {
   'use strict';
@@ -265,9 +265,82 @@
     return li;
   }
 
+  // ── Lot C : une liste envoyée par lien (`get_shared_list`), lisible sans compte ──────────────────────────────
+  function renderList() {
+    let token = P.sharedListToken(location.search);
+    if (token === null || !CONFIG.supabaseUrl || !CONFIG.publishableKey) {
+      message('listGoneTitle', 'listGoneText');
+      return;
+    }
+    clear();
+    card.appendChild(el('p', 'texte', T('loading')));
+    let endpoint = P.safeHref(CONFIG.supabaseUrl + '/rest/v1/rpc/get_shared_list');
+    if (endpoint === null) {
+      message('listGoneTitle', 'listGoneText');
+      return;
+    }
+    fetch(endpoint, {
+      method: 'POST',
+      headers: { apikey: CONFIG.publishableKey, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ p_token: token }),
+      credentials: 'omit',
+      referrerPolicy: 'no-referrer'
+    })
+      .then(function (res) {
+        return res.text().then(function (raw) {
+          return { status: res.status, body: P.parseJson(raw) };
+        });
+      })
+      .then(function (result) {
+        try {
+          if (result.status < 200 || result.status > 299 || result.body === undefined) {
+            message('unavailableTitle', 'unavailableText');
+            return;
+          }
+          let list = P.normalizeSharedList(result.body);
+          if (list === null) {
+            message('listGoneTitle', 'listGoneText');
+            return;
+          }
+          drawList(list, token);
+        } catch (_e) {
+          message('unavailableTitle', 'unavailableText');
+        }
+      }, function () {
+        message('networkTitle', 'networkText');
+      });
+  }
+
+  function drawList(list, token) {
+    clear();
+    card.appendChild(el('span', 'pastille', T('listBadge')));
+    document.title = list.title + ' · Savora';
+    card.appendChild(el('h1', null, list.title));
+    if (list.sender) {
+      card.appendChild(el('p', 'meta', T('sentBy', { name: list.sender })));
+    }
+    let section = el('section', 'etagere');
+    let head = el('div', 'etagere-tete');
+    head.appendChild(el('span', 'compte', P.countText(lang, list.places.length)));
+    section.appendChild(head);
+    let ul = el('ul', 'lieux');
+    for (let i = 0; i < list.places.length; i++) {
+      ul.appendChild(placeRow(list.places[i]));
+    }
+    section.appendChild(ul);
+    card.appendChild(section);
+    let open = el('div', 'actions');
+    append(open, link(P.sharedListAppUrl(token), 'bouton', T('open'), false));
+    card.appendChild(open);
+    card.appendChild(el('p', 'note', T('downloadNote')));
+    append(card, link(P.TESTFLIGHT_URL, 'lien-discret', T('download'), true));
+  }
+
   if (page === 'lieu') {
     renderPlace();
   } else if (page === 'carnet') {
     renderCarnet();
+  } else if (page === 'liste') {
+    renderList();
   }
 })();

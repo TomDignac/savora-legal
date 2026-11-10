@@ -53,3 +53,7 @@ export type PageState = { kind: 'data'; carnet: PageCarnet } | { kind: 'neutral'
 export function parseJson(raw: unknown): unknown;
 export function pageStateFor(status: number, body: unknown): PageState;
 export function shelfTitle(lang: string, shelf: Shelf): string;
+/** Lot C : une liste envoyée (`get_shared_list`). */
+export function sharedListToken(search: string): string | null;
+export function sharedListAppUrl(token: string): string | null;
+export function normalizeSharedList(json: unknown): { title: string; sender: string; places: PagePlace[] } | null;

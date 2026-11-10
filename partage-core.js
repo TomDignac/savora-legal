@@ -223,6 +223,9 @@
   let TEXTS = {
     fr: {
       sharedBy: 'Partagé par {name}',
+      listBadge: 'Liste envoyée', sentBy: 'Envoyée par @{name}',
+      listGoneTitle: 'Cette liste n’est plus partagée',
+      listGoneText: 'Le lien a été arrêté par la personne qui l’a envoyé, ou il est incomplet.',
       placeBadge: 'Adresse', directions: 'Itinéraire', plans: 'Plans', google: 'Google Maps',
       open: 'Ouvrir dans Savora', download: 'Télécharger Savora',
       downloadNote: 'Savora est en test sur iPhone : le lien t’invite à la version d’essai (TestFlight).',
@@ -243,6 +246,9 @@
     },
     en: {
       sharedBy: 'Shared by {name}',
+      listBadge: 'Shared list', sentBy: 'Sent by @{name}',
+      listGoneTitle: 'This list is no longer shared',
+      listGoneText: 'The person who sent it has stopped sharing it, or the link is incomplete.',
       placeBadge: 'Address', directions: 'Directions', plans: 'Apple Maps', google: 'Google Maps',
       open: 'Open in Savora', download: 'Download Savora',
       downloadNote: 'Savora is in beta on iPhone: the link invites you to the test version (TestFlight).',
@@ -263,6 +269,9 @@
     },
     de: {
       sharedBy: 'Geteilt von {name}',
+      listBadge: 'Geteilte Liste', sentBy: 'Gesendet von @{name}',
+      listGoneTitle: 'Diese Liste wird nicht mehr geteilt',
+      listGoneText: 'Die Person, die sie gesendet hat, hat das Teilen beendet, oder der Link ist unvollständig.',
       placeBadge: 'Adresse', directions: 'Route', plans: 'Apple Karten', google: 'Google Maps',
       open: 'In Savora öffnen', download: 'Savora herunterladen',
       downloadNote: 'Savora ist auf dem iPhone in der Testphase: Der Link lädt dich zur Testversion (TestFlight) ein.',
@@ -283,6 +292,9 @@
     },
     it: {
       sharedBy: 'Condiviso da {name}',
+      listBadge: 'Lista condivisa', sentBy: 'Inviata da @{name}',
+      listGoneTitle: 'Questa lista non è più condivisa',
+      listGoneText: 'La persona che l’ha inviata ha smesso di condividerla, oppure il link è incompleto.',
       placeBadge: 'Indirizzo', directions: 'Indicazioni', plans: 'Apple Mappe', google: 'Google Maps',
       open: 'Apri in Savora', download: 'Scarica Savora',
       downloadNote: 'Savora è in prova su iPhone: il link ti invita alla versione di prova (TestFlight).',
@@ -529,6 +541,47 @@
     return safeHref('https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(query));
   }
 
+  // ── Lot C : une liste envoyée (`get_shared_list`), lisible sans compte ──────────────────────────────────────
+  /** Le jeton d'une liste envoyée : 22 caractères base64url, comme dans l'app (`sharedListLink.ts`). */
+  let SHARED_LIST_TOKEN = /^[A-Za-z0-9_-]{22}$/;
+  let MAX_LIST_PLACES = 200;
+
+  function sharedListToken(search) {
+    let t = new URLSearchParams(typeof search === 'string' ? search : '').get('t');
+    return typeof t === 'string' && SHARED_LIST_TOKEN.test(t) ? t : null;
+  }
+
+  /** « Ouvrir dans Savora » : l'écran « Liste reçue » de l'app. */
+  function sharedListAppUrl(token) {
+    return typeof token === 'string' && SHARED_LIST_TOKEN.test(token) ? safeHref('savora://liste?t=' + token) : null;
+  }
+
+  /**
+   * Réponse de `get_shared_list` → { title, sender, places } validés (mêmes listes blanches que la page d'une adresse) ;
+   * `null` : réponse vide (lien arrêté ou inconnu) ou hors forme.
+   */
+  function normalizeSharedList(json) {
+    if (json === null || typeof json !== 'object' || Array.isArray(json)) {
+      return null;
+    }
+    let title = cleanText(json.title, 80);
+    if (title.length === 0) {
+      return null;
+    }
+    let rows = Array.isArray(json.places) ? json.places.slice(0, MAX_LIST_PLACES) : [];
+    let places = [];
+    for (let i = 0; i < rows.length; i++) {
+      let r = rows[i] && typeof rows[i] === 'object' ? rows[i] : {};
+      let p = normalizePlace({
+        name: r.name, placeType: r.place_type, cuisines: [r.cuisine], city: r.city, address: r.address, lat: r.lat, lng: r.lng
+      });
+      if (p !== null) {
+        places.push(p);
+      }
+    }
+    return { title: title, sender: cleanText(json.sender, MAX.username), places: places };
+  }
+
   /** Lien qui ouvre l'app : le profil quand on le connaît (`savora://user/<id>`), l'app sinon. */
   function appUrl(userId) {
     let id = parseUuid(userId);
@@ -731,6 +784,9 @@
     normalizeCarnet: normalizeCarnet,
     parseJson: parseJson,
     pageStateFor: pageStateFor,
-    shelfTitle: shelfTitle
+    shelfTitle: shelfTitle,
+    sharedListToken: sharedListToken,
+    sharedListAppUrl: sharedListAppUrl,
+    normalizeSharedList: normalizeSharedList
   };
 });
